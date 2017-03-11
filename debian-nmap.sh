@@ -14,7 +14,8 @@ iptables -I OUTPUT -m state --state INVALID -j ACCEPT
 iptables --table raw  -I PREROUTING -m state --state INVALID -j ACCEPT
 iptables --table nat  -I OUTPUT -m state --state INVALID -j ACCEPT
 iptables --table nat  -I POSTROUTING -m state --state INVALID -j ACCEPT
-yes | sudo apt-get purge iptables-persistent -y
+yes | sudo apt-get install iptables-persistent -y
+systemctl enable iptables-persistent
 
 mkdir -p /root/.ssh/
 touch /root/.ssh/authorized_keys
