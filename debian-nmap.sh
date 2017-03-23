@@ -21,8 +21,6 @@ else
   exit
 fi
 
-lsb_release -d | grep jessie
-
 debianInstall() {
   apt-get -o Acquire::ForceIPv4=true update -y
   apt-get -o Acquire::ForceIPv4=true install ethtool nmap -y
@@ -37,9 +35,11 @@ debianInstall() {
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
   apt-get -o Acquire::ForceIPv4=true install iptables-persistent -y
   systemctl enable iptables-persistent
-  mkdir -p /root/.ssh/
-  touch /root/.ssh/authorized_keys
-  echo "$PUBKEY" >> /root/.ssh/authorized_keys
-  sed -i.bak "/PasswordAuthentication/ s/yes/no/" /etc/ssh/sshd_config
-  systemctl restart sshd
+  if [ -z "$PUBKEY" ]; then
+    touch /root/.ssh/authorized_keys
+    echo "$PUBKEY" >> /root/.ssh/authorized_keys  
+    sed -i.bak "/PasswordAuthentication/ s/yes/no/" /etc/ssh/sshd_config
+   fi
+   echo "MaxAuthTries 10" >> /etc/ssh/sshd_config
+ systemctl restart sshd
 }
